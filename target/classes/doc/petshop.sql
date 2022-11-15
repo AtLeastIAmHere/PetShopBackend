@@ -11,7 +11,7 @@
  Target Server Version : 80031 (8.0.31)
  File Encoding         : 65001
 
- Date: 13/11/2022 16:16:54
+ Date: 15/11/2022 14:54:51
 */
 
 SET NAMES utf8mb4;
@@ -35,7 +35,8 @@ CREATE TABLE `operator`  (
 -- ----------------------------
 -- Records of operator
 -- ----------------------------
-INSERT INTO `operator` VALUES (1, 'Mack', '1234', '123', '123', '123', '123');
+INSERT INTO `operator` VALUES (1, 'Wendy', 'Wendy', '123', '769-2191-5449', 'nufIqxG3oO', 'Sk7EeeCaq4');
+INSERT INTO `operator` VALUES (2, 'Jeremy', 'Jeremy', '123', '197-4863-4026', 'AY9Nfi2EZS', '5jgnQ65Ozs');
 
 -- ----------------------------
 -- Table structure for operator_order_purchase
@@ -52,6 +53,7 @@ CREATE TABLE `operator_order_purchase`  (
   `supplier_phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `supplier_company` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `supplier_address` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `datetime` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`purchase_order_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
@@ -75,6 +77,7 @@ CREATE TABLE `operator_order_sales`  (
   `user_address` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `user_remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `order_date` datetime NOT NULL,
+  `sales_all_price` double NULL DEFAULT NULL,
   PRIMARY KEY (`sales_order_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
@@ -103,6 +106,26 @@ CREATE TABLE `operator_pet`  (
 -- ----------------------------
 -- Records of operator_pet
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for supplier
+-- ----------------------------
+DROP TABLE IF EXISTS `supplier`;
+CREATE TABLE `supplier`  (
+  `supplier_id` int NOT NULL,
+  `supplier_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `password` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `bank_card` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  PRIMARY KEY (`supplier_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of supplier
+-- ----------------------------
+INSERT INTO `supplier` VALUES (1, 'Rhonda', 'Rhonda', '123', '186-9149-1558', '346511105970783');
+INSERT INTO `supplier` VALUES (2, 'Jason', 'Jason', '123', '760-866-9462', '5105992536246896');
 
 -- ----------------------------
 -- Table structure for supplier_order_sales
@@ -152,44 +175,6 @@ CREATE TABLE `supplier_stock`  (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for suppllier
--- ----------------------------
-DROP TABLE IF EXISTS `suppllier`;
-CREATE TABLE `suppllier`  (
-  `supplier_id` int NOT NULL,
-  `supplier_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `password` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `bank_card` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  PRIMARY KEY (`supplier_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of suppllier
--- ----------------------------
-
--- ----------------------------
--- Table structure for sys_token
--- ----------------------------
-DROP TABLE IF EXISTS `sys_token`;
-CREATE TABLE `sys_token`  (
-  `user_id` int NOT NULL,
-  `expire_time` datetime NULL DEFAULT NULL,
-  `token` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
-  `update_time` datetime NULL DEFAULT NULL,
-  `userid` int NOT NULL,
-  PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of sys_token
--- ----------------------------
-INSERT INTO `sys_token` VALUES (1, '2022-11-12 23:32:27', '533081da5746d503f522ee0aa820897e', '2022-11-12 11:32:27', 0);
-INSERT INTO `sys_token` VALUES (2, '2022-11-12 23:30:17', 'cb85edec0dc14bdc1fd066c1296a323c', '2022-11-12 11:30:17', 0);
-INSERT INTO `sys_token` VALUES (3, '2020-04-21 21:49:41', '60350a6d830edbe911944d81f95c2e0b', '2020-04-21 09:49:41', 0);
-
--- ----------------------------
 -- Table structure for user
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
@@ -198,10 +183,10 @@ CREATE TABLE `user`  (
   `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `password` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `credit_card` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `e_mail` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `address` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `credit_card` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `e_mail` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `address` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `self_introduction` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   PRIMARY KEY (`user_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
@@ -209,31 +194,35 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, 'Rose', '12344', '123', '123', '123', '123', '123', '123');
+INSERT INTO `user` VALUES (1, 'Rose', 'Rose', '123', '172-9196-9899', '377972196636695', 'fisherj@yahoo.com', '755 1st Ave', 'GpyeAMyupL');
+INSERT INTO `user` VALUES (2, 'Jack', 'Jack', '123', '28-133-0036', '342421778316419', 'waynesoto@outlook.com', '550 Collier Road', 'aO0kjpTihg');
+INSERT INTO `user` VALUES (3, 'Mack', 'Mack', '123', '138-3857-8477', '4753202220147535', 'gordonde@hotmail.com', '327 Alameda Street', 'j6itnh7iti');
+INSERT INTO `user` VALUES (4, 'Peter', 'Peter', '123', '130-5173-7716', '6224738512182306', 'patrickwoods50@icloud.com', '527 Fifth Avenue', 'CL4hW885Ww');
 
 -- ----------------------------
 -- Table structure for user_order
 -- ----------------------------
 DROP TABLE IF EXISTS `user_order`;
 CREATE TABLE `user_order`  (
-  `orderID` int NOT NULL AUTO_INCREMENT,
-  `userName` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `userID` int NOT NULL,
-  `petID` int NOT NULL,
-  `petPrice` decimal(10, 2) NOT NULL,
-  `petQuantity` int NOT NULL,
-  `userPhone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `userAddress` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `orderTime` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `order_id` int NOT NULL AUTO_INCREMENT,
+  `user_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `user_id` int NOT NULL,
+  `pet_id` int NOT NULL,
+  `pet_price` decimal(10, 2) NOT NULL,
+  `pet_quantity` int NOT NULL,
+  `user_phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `user_address` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `order_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `expressCarrier` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `curierNumber` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `deliveryTime` datetime NOT NULL,
+  `express_carrier` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `curier_number` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `delivery_time` datetime NOT NULL,
   `evaluation` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `orderPrice` decimal(10, 2) NOT NULL,
-  PRIMARY KEY (`orderID`) USING BTREE,
-  INDEX `userId`(`userID` ASC) USING BTREE,
-  INDEX `petId`(`petID` ASC) USING BTREE
+  `order_price` decimal(10, 2) NOT NULL,
+  `deliver_time` datetime NULL DEFAULT NULL,
+  PRIMARY KEY (`order_id`) USING BTREE,
+  INDEX `userId`(`user_id` ASC) USING BTREE,
+  INDEX `petId`(`pet_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -246,8 +235,8 @@ CREATE TABLE `user_order`  (
 DROP TABLE IF EXISTS `user_shoppingcart`;
 CREATE TABLE `user_shoppingcart`  (
   `user_shoppingcart_id` int NOT NULL,
-  `petID` int NOT NULL,
-  `petName` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `pet_id` int NOT NULL,
+  `pet_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `specie` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `color` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `birthday` datetime NOT NULL,

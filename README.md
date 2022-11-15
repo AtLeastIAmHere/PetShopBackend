@@ -1,2 +1,21 @@
-### sql文件在/resources/doc下
+# petshop
+#### 11.15
 
+1. 完成**登录接口**
+   ```
+   petshop/login
+   ```
+
+   传入参数：
+
+   ```json
+   {
+       "account": "Rose123",
+       "password": "123",
+       "type":		"1"		//账户类型，1表示用户，2表示商店方，3表示供货商
+   }
+   ```
+
+   验证数据库，返回 登录成功 或 账号密码失败提示
+
+2. **更新**mysql数据库结构数据，最新sql文件在/resources/doc下
