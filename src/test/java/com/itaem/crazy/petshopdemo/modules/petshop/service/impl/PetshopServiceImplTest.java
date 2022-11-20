@@ -2,7 +2,6 @@ package com.itaem.crazy.petshopdemo.modules.petshop.service.impl;
 
 import com.itaem.crazy.petshopdemo.modules.petshop.dao.UserRepository;
 import com.itaem.crazy.petshopdemo.modules.petshop.entity.User;
-import com.itaem.crazy.petshopdemo.modules.petshop.service.PetshopService;
 import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
