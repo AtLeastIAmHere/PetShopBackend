@@ -19,3 +19,16 @@
    验证数据库，返回 登录成功 或 账号密码失败提示
 
 2. **更新**mysql数据库结构数据，最新sql文件在/resources/doc下
+
+
+
+
+#### 11.20
+1. 商店管理员接口文档
+   ```
+   https://console-docs.apipost.cn/preview/a341ca4015266f0a/c06d8fc1eaecd775
+   ```
+2. 供应商接口文档
+   ```
+   https://console-docs.apipost.cn/preview/cc87e0cbba56f59a/8609fedc60dcbcf6
+   ```
