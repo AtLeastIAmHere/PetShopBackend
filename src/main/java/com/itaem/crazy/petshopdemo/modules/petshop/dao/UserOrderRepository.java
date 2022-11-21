@@ -10,7 +10,7 @@ import java.util.List;
 public interface UserOrderRepository extends JpaRepository<UserOrder, Integer> {
     List<UserOrder> findAllByUserIdAndOrderState(Integer userId, Integer state);
 
-    List<UserOrder> findAllByUserOrderId(Integer userOrderId);
+    List<UserOrder> findAllByUserId(Integer userOrderId);
 
     UserOrder findByUserOrderId(Integer userOrderId);
 }

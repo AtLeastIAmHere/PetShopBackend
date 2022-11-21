@@ -302,7 +302,7 @@ public class OperatorController {
         Map<String, Object> result = new HashMap<>();
 
         OperatorPetOrderSales petOrderSales = operatorService.findPetOrderById(orderId);
-        UserOrder userOrder = operatorService.findUserOrderById(petOrderSales.getSalesOrderId());
+        UserOrder userOrder = operatorService.findUserOrderById(petOrderSales.getUserOrderId());
 
         // 商家拒绝订单，更改订单状态
         userOrder.setOrderState(5);
@@ -327,7 +327,7 @@ public class OperatorController {
         Map<String, Object> result = new HashMap<>();
 
         OperatorProductsOrderSales productsOrderSales = operatorService.findProductsOrderById(orderId);
-        UserOrder userOrder = operatorService.findUserOrderById(productsOrderSales.getSalesOrderId());
+        UserOrder userOrder = operatorService.findUserOrderById(productsOrderSales.getUserOrderId());
 
         // 商家拒绝订单，更改订单状态
         userOrder.setOrderState(5);

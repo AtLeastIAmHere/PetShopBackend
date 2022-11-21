@@ -168,9 +168,14 @@ public class UserController {
         List<UserOrder> userOrderList;
         if(state == 0){
             userOrderList = userService.findUserOrderByUserId(userId);
+
+            LogManager.GetInstance().logger.info(userId.toString());
+            LogManager.GetInstance().logger.info(userOrderList.toString());
         }
         else{
-            userOrderList = userService.findUserOrderByUserIdAndState(userId, state);
+
+             userOrderList = userService.findUserOrderByUserIdAndState(userId, state);
+
         }
 
         // 将订单处理成结果格式
@@ -233,6 +238,7 @@ public class UserController {
         User user = operatorService.findUserByToken(token);
         UserOrder userOrder = operatorService.findUserOrderById(userOrderId);
         userOrder.setOrderState(4);
+        userService.saveUserOrder(userOrder);
 
         result.put("code", 200);
         result.put("msg", "成功确认收货");

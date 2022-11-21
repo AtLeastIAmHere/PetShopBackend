@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserOrder> findUserOrderByUserId(Integer userId) {
-        return userOrderRepository.findAllByUserOrderId(userId);
+        return userOrderRepository.findAllByUserId(userId);
     }
 
 
