@@ -246,6 +246,7 @@ public class SupplierController {
 
 
     /**
+     *
      * 5. 宠物发货：修改宠物库存信息、供应商账单、用户帐单
      */
     @ApiOperation(value = "修改宠物订单状态", notes = "参数: 宠物订单id")
@@ -253,30 +254,37 @@ public class SupplierController {
     public Map<String, Object> confirmOrderPet(@RequestBody ConfirmOrderDTO confirmOrderDTO) {
         Map<String, Object> result = new HashMap<>();
 
-        // 获取需要修改的订单的id
-        Integer orderId = confirmOrderDTO.getOrderId();
+        List<SupplierPetOrderSales> petsOrdersList = supplierService.getAllPetOrders();
 
-        SupplierPetOrderSales petOrderSales = supplierService.getPetOrderById(orderId);
+        List<SupplierPetOrderSales> petsOrdersFinish = new ArrayList<>();
 
-        if (petOrderSales == null) {
-            // 如果为null则可能获取失败
-            result.put("status", 400);
-            result.put("msg", "订单确认失败，请联系后台");
-            return result;
+        // 将已完成订单加入结果
+        for(int i = 0; i < petsOrdersList.size(); ++i){
+            if(petsOrdersList.get(i).getIsDelivery().equals("0")){
+                petsOrdersFinish.add(petsOrdersList.get(i));
+            }
         }
 
+        for(int i = 0; i < petsOrdersFinish.size(); ++i){
+            Integer orderId = petsOrdersFinish.get(i).getSalesOrderId();
+            SupplierPetOrderSales petOrderSales = supplierService.getPetOrderById(orderId);
 
-        // 订单宠物的对应ID
-        Integer petId = petOrderSales.getSalesPetId();
+            if (petOrderSales == null) {
+                // 如果为null则可能获取失败
+                result.put("status", 400);
+                result.put("msg", "订单确认失败，请联系后台");
+                return result;
+            }
 
-        // 订单上宠物交易数量
-        Integer orderPetNum = petOrderSales.getSalesPetQuantity();
 
-        // 找到对应库存位置
-        SupplierPetStock petStock = supplierService.getPetStockById(petId);
-        // 检查库存是否还有足够容量
-        if(petStock.getQuantity() >= orderPetNum){
-            // 容量足够，可发货，更新状态
+            // 订单宠物的对应ID
+            Integer petId = petOrderSales.getSalesPetId();
+
+            // 订单上宠物交易数量
+            Integer orderPetNum = petOrderSales.getSalesPetQuantity();
+
+            // 找到对应库存位置
+            SupplierPetStock petStock = supplierService.getPetStockById(petId);
 
             // 更新库存
             petStock.setQuantity(petStock.getQuantity() - orderPetNum);
@@ -292,16 +300,12 @@ public class SupplierController {
             UserOrder userOrder = supplierService.getUserOrderById(userOrderId);
             userOrder.setOrderState(3);// 状态变为待收货
             supplierService.saveUserOrder(userOrder);
+        }
 
-            // 获取成功，返回账单
-            result.put("status", 200);
-            result.put("msg", "订单确认成功，已更改配送状态");
-        }
-        else{
-            // 容量不足，不进行更新
-            result.put("status", 200);
-            result.put("msg", "宠物库存不足，请等待库存补充或查看类似商品");
-        }
+
+        // 获取成功，返回账单
+        result.put("status", 200);
+        result.put("msg", "订单确认成功，已更改配送状态");
         return result;
     }
 
@@ -313,40 +317,46 @@ public class SupplierController {
     public Map<String, Object> confirmOrderProducts(@RequestBody ConfirmOrderDTO confirmOrderDTO) {
         Map<String, Object> result = new HashMap<>();
 
-        // 获取需要修改的订单的id
-        Integer orderId = confirmOrderDTO.getOrderId();
+        List<SupplierProductsOrderSales> productsOrdersList = supplierService.getAllProductsOrders();
 
-        SupplierProductsOrderSales productsOrderSales = supplierService.getProductsOrderById(orderId);
+        List<SupplierProductsOrderSales> productsOrdersFinish = new ArrayList<>();
 
-        if (productsOrderSales == null) {
-            // 如果为null则可能获取失败
-            result.put("status", 400);
-            result.put("msg", "订单确认失败，请联系后台");
-            return result;
+
+        for(int i = 0; i < productsOrdersList.size(); ++i){
+            if(productsOrdersList.get(i).getIsDelivery().equals("0")){
+                productsOrdersFinish.add(productsOrdersList.get(i));
+            }
         }
+        for(int i = 0; i < productsOrdersFinish.size(); ++i){
+            Integer orderId = productsOrdersFinish.get(i).getSalesOrderId();
+            SupplierProductsOrderSales productsOrderSales = supplierService.getProductsOrderById(orderId);
+
+            if (productsOrderSales == null) {
+                // 如果为null则可能获取失败
+                result.put("status", 400);
+                result.put("msg", "订单确认失败，请联系后台");
+                return result;
+            }
 
 
-        // 供订单宠物用品的对应ID
-        Integer productsId = productsOrderSales.getSalesProductsId();
+            // 供订单宠物用品的对应ID
+            Integer productsId = productsOrderSales.getSalesProductsId();
 
-        // 订单上宠物交易数量
-        Integer orderPetNum = productsOrderSales.getSalesProductsQuantity();
+            // 订单上宠物交易数量
+            Integer orderPetNum = productsOrderSales.getSalesProductsQuantity();
 
-        // 找到对应库存位置
-        SupplierProductsStock productsStock = supplierService.findProductStockById(productsId);
-        // 检查库存是否还有足够容量
+            // 找到对应库存位置
+            SupplierProductsStock productsStock = supplierService.findProductStockById(productsId);
+            // 检查库存是否还有足够容量
 
-        //**null
-        if(productsStock == null){
-            result.put("status", 400);
-            result.put("msg", "致命错误，请联系后台技术人员");
-            result.put("orderId", orderId);
-            result.put("salesOrder", productsOrderSales);
-            return result;
-        }
-
-        if(productsStock.getQuantity() >= orderPetNum){
-            // 容量足够，可发货，更新状态
+            //**null
+            if(productsStock == null){
+                result.put("status", 400);
+                result.put("msg", "致命错误，请联系后台技术人员");
+                result.put("orderId", orderId);
+                result.put("salesOrder", productsOrderSales);
+                return result;
+            }
 
             // 更新库存
             productsStock.setQuantity(productsStock.getQuantity() - orderPetNum);
@@ -366,15 +376,13 @@ public class SupplierController {
             userOrder.setOrderState(3);// 状态变为待收货
             supplierService.saveUserOrder(userOrder);
 
-            // 获取成功，返回账单
-            result.put("status", 200);
-            result.put("msg", "订单修改成功，已更改配送状态");
+
         }
-        else{
-            // 容量不足，不进行更新
-            result.put("status", 400);
-            result.put("msg", "宠物库存不足，请等待库存补充或查看类似商品");
-        }
+
+        // 获取成功，返回账单
+        result.put("status", 200);
+        result.put("msg", "订单修改成功，已更改配送状态");
+
         return result;
     }
 

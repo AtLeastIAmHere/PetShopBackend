@@ -43,7 +43,6 @@ public class OperatorController {
         this.supplierService = supplierService;
     }
 
-
     /**
      * 1. 登录接口
      */
@@ -74,12 +73,11 @@ public class OperatorController {
         return result;
     }
 
-
     /**
-     * 2. 获取已完成的销售订单
+     * 3. 返回已完成订单
      */
     @ApiOperation(value = "获取已完成的销售账单", notes = "无参数")
-    @PostMapping("/operator/getOrders/sales")
+    @PostMapping("/operator/getOrders/finish")
     public Map<String, Object> getSalesOrdersFinish() {
         Map<String, Object> result = new HashMap<>();
 
@@ -113,32 +111,11 @@ public class OperatorController {
     }
 
 
-//    /**
-//     * 3. 获取进货账单
-//     */
-//    @ApiOperation(value = "获取进货账单", notes = "参数:无")
-//    @PostMapping("/operator/getOrders/purchase")
-//    public Map<String, Object> getPurchaseOrders() {
-//        Map<String, Object> result = new HashMap<>();
-//
-//        List<OperatorPetOrderPurchase> petPurchasesList = operatorService.getAllPetPurchase();
-//        List<OperatorProductsOrderPurchase> productsPurchaseList = operatorService.getAllProductsPurchase();
-//
-//        // 获取成功，返回账单
-//        result.put("status", 200);
-//        result.put("msg", "进货账单获取成功");
-//        result.put("宠物进货账单", petPurchasesList);
-//        result.put("宠物用品进货账单", productsPurchaseList);
-//
-//        return result;
-//    }
-
-
     /**
-     * 4. 获取未处理的销售订单
+     * 4. 返回未发货订单
      */
     @ApiOperation(value = "获取未处理的销售订单", notes = "无参数")
-    @PostMapping("/operator/getOrders/notConfirm")
+    @PostMapping("/operator/getOrders/notDelivery")
     public Map<String, Object> getSalesOrdersNotFinish() {
         Map<String, Object> result = new HashMap<>();
 
@@ -187,51 +164,66 @@ public class OperatorController {
         return result;
     }
 
-
     /**
-     * 5. 确认宠物订单：确认订单，供应商增加待处理订单
+     *
+     * 5. 宠物发货：修改宠物库存信息、供应商账单、用户帐单
      */
     @ApiOperation(value = "确认订单", notes = "参数：宠物订单id")
     @PostMapping("/operator/confirmOrder/pet")
     public Map<String, Object> orderPetConfirm(@RequestBody ConfirmOrderDTO confirmOrderDTO){
         Map<String, Object> result = new HashMap<>();
 
-        Integer orderId = confirmOrderDTO.getOrderId();
-        OperatorPetOrderSales operatorPetOrderSales = operatorService.findPetOrderById(orderId);
+        List<OperatorPetOrderSales> petSalesList = operatorService.getAllPetSales();
 
-        // 查找该订单是否合法
-        if(operatorPetOrderSales == null){
-            result.put("status", 400);
-            result.put("msg", "订单确认失败，请联系后台");
-            return result;
+        List<OperatorPetOrderSales> petSalesFinish = new ArrayList<>();
+
+        // 选择已完成的订单加入到结果中
+        for(int i = 0; i < petSalesList.size(); ++i){
+            if(petSalesList.get(i).getIsConfirm().equals("0")){
+                petSalesFinish.add(petSalesList.get(i));
+            }
+        }
+        for(int i = 0; i < petSalesFinish.size(); ++i){
+            Integer orderId = petSalesFinish.get(i).getSalesOrderId();
+
+            OperatorPetOrderSales operatorPetOrderSales = operatorService.findPetOrderById(orderId);
+
+            // 查找该订单是否合法
+            if(operatorPetOrderSales == null){
+                result.put("status", 400);
+                result.put("msg", "订单确认失败，请联系后台");
+                return result;
+            }
+
+            operatorPetOrderSales.setIsConfirm("1");
+            operatorService.petOrderSalesSave(operatorPetOrderSales);
+
+            // 更改GoodStatus状态
+
+            // 供应商增加未处理订单
+            SupplierPetOrderSales supplierPetOrderSales = new SupplierPetOrderSales();
+            supplierPetOrderSales.setSalesPetId(operatorPetOrderSales.getSalesPetId());
+            supplierPetOrderSales.setSalesPetQuantity(operatorPetOrderSales.getSalesPetQuantity());
+            supplierPetOrderSales.setSalesPetPrice(operatorPetOrderSales.getSalesPetPrice());
+            supplierPetOrderSales.setPetshopId(1);
+            supplierPetOrderSales.setPetshopName("Wuli");
+            supplierPetOrderSales.setPetshopPhone("12345678");
+            supplierPetOrderSales.setPetshopAddress("Hubei Province Wuhan University of Technology");
+            supplierPetOrderSales.setPetshopRemarks("None");
+            supplierPetOrderSales.setUserId(operatorPetOrderSales.getUserId());
+            supplierPetOrderSales.setUserOrderId(operatorPetOrderSales.getUserOrderId());
+            supplierPetOrderSales.setUserName(operatorPetOrderSales.getUserName());
+            supplierPetOrderSales.setUserPhone(operatorPetOrderSales.getUserPhone());
+            supplierPetOrderSales.setUserAddress(operatorPetOrderSales.getUserAddress());
+            supplierPetOrderSales.setUserRemarks(operatorPetOrderSales.getUserRemarks());
+            supplierPetOrderSales.setOrderDate(operatorPetOrderSales.getOrderDate());
+            supplierPetOrderSales.setSalesAllPrice(operatorPetOrderSales.getSalesAllPrice());
+            supplierPetOrderSales.setIsDelivery("0");
+
+            supplierService.petOrdersSave(supplierPetOrderSales);
         }
 
-        operatorPetOrderSales.setIsConfirm("1");
-        operatorService.petOrderSalesSave(operatorPetOrderSales);
 
-        // 更改GoodStatus状态
-
-        // 供应商增加未处理订单
-        SupplierPetOrderSales supplierPetOrderSales = new SupplierPetOrderSales();
-        supplierPetOrderSales.setSalesPetId(operatorPetOrderSales.getSalesPetId());
-        supplierPetOrderSales.setSalesPetQuantity(operatorPetOrderSales.getSalesPetQuantity());
-        supplierPetOrderSales.setSalesPetPrice(operatorPetOrderSales.getSalesPetPrice());
-        supplierPetOrderSales.setPetshopId(1);
-        supplierPetOrderSales.setPetshopName("Wuli");
-        supplierPetOrderSales.setPetshopPhone("12345678");
-        supplierPetOrderSales.setPetshopAddress("Hubei Province Wuhan University of Technology");
-        supplierPetOrderSales.setPetshopRemarks("None");
-        supplierPetOrderSales.setUserId(operatorPetOrderSales.getUserId());
-        supplierPetOrderSales.setUserOrderId(operatorPetOrderSales.getUserOrderId());
-        supplierPetOrderSales.setUserName(operatorPetOrderSales.getUserName());
-        supplierPetOrderSales.setUserPhone(operatorPetOrderSales.getUserPhone());
-        supplierPetOrderSales.setUserAddress(operatorPetOrderSales.getUserAddress());
-        supplierPetOrderSales.setUserRemarks(operatorPetOrderSales.getUserRemarks());
-        supplierPetOrderSales.setOrderDate(operatorPetOrderSales.getOrderDate());
-        supplierPetOrderSales.setSalesAllPrice(operatorPetOrderSales.getSalesAllPrice());
-        supplierPetOrderSales.setIsDelivery("0");
-
-        supplierService.petOrdersSave(supplierPetOrderSales);
 
 
         result.put("status", 200);
@@ -241,48 +233,64 @@ public class OperatorController {
 
 
     /**
-     * 6. 确认宠物用品订单：确认订单，供应商增加待处理订单
+     * 6. 宠物用品发货：修改宠物库存信息、供应商账单、用户帐单
      */
     @ApiOperation(value = "确认订单", notes = "参数：宠物用品订单id")
     @PostMapping("/operator/confirmOrder/products")
     public Map<String, Object> orderProductsConfirm(@RequestBody ConfirmOrderDTO confirmOrderDTO){
         Map<String, Object> result = new HashMap<>();
 
-        Integer orderId = confirmOrderDTO.getOrderId();
-        OperatorProductsOrderSales operatorProductsOrderSales = operatorService.findProductsOrderById(orderId);
+        List<OperatorProductsOrderSales> productsSalesList = operatorService.getAllProductsSales();
 
-        // 查找该订单是否合法
-        if(operatorProductsOrderSales == null){
-            result.put("status", 400);
-            result.put("msg", "订单确认失败，请联系后台");
-            return result;
+        List<OperatorProductsOrderSales> productsSalesFinish = new ArrayList<>();
+
+
+        for(int i = 0; i < productsSalesList.size(); ++i){
+            if(productsSalesList.get(i).getIsConfirm().equals("0")){
+                productsSalesFinish.add(productsSalesList.get(i));
+            }
         }
 
-        operatorProductsOrderSales.setIsConfirm("1");
-        operatorService.productsOrderSalesSave(operatorProductsOrderSales);
+        for(int i = 0; i < productsSalesFinish.size(); ++i){
+            Integer orderId = productsSalesFinish.get(i).getSalesOrderId();
 
 
-        // 供应商增加未处理订单
-        SupplierProductsOrderSales supplierProductsOrderSales = new SupplierProductsOrderSales();
-        supplierProductsOrderSales.setSalesProductsId(operatorProductsOrderSales.getSalesProductsId());
-        supplierProductsOrderSales.setSalesProductsQuantity(operatorProductsOrderSales.getSalesProductsQuantity());
-        supplierProductsOrderSales.setSalesProductsPrice(operatorProductsOrderSales.getSalesProductsPrice());
-        supplierProductsOrderSales.setPetshopId(1);
-        supplierProductsOrderSales.setPetshopName("Wuli");
-        supplierProductsOrderSales.setPetshopPhone("12345678");
-        supplierProductsOrderSales.setPetshopAddress("Hubei Province Wuhan University of Technology");
-        supplierProductsOrderSales.setPetshopRemarks("None");
-        supplierProductsOrderSales.setUserOrderId(operatorProductsOrderSales.getUserOrderId());
-        supplierProductsOrderSales.setUserName(operatorProductsOrderSales.getUserName());
-        supplierProductsOrderSales.setUserPhone(operatorProductsOrderSales.getUserPhone());
-        supplierProductsOrderSales.setUserPhone(operatorProductsOrderSales.getUserPhone());
-        supplierProductsOrderSales.setUserAddress(operatorProductsOrderSales.getUserAddress());
-        supplierProductsOrderSales.setUserRemarks(operatorProductsOrderSales.getUserRemarks());
-        supplierProductsOrderSales.setOrderDate(operatorProductsOrderSales.getOrderDate());
-        supplierProductsOrderSales.setSalesAllPrice(operatorProductsOrderSales.getSalesAllPrice());
-        supplierProductsOrderSales.setIsDelivery("0");
+            OperatorProductsOrderSales operatorProductsOrderSales = operatorService.findProductsOrderById(orderId);
 
-        supplierService.productsOrdersSave(supplierProductsOrderSales);
+            // 查找该订单是否合法
+            if(operatorProductsOrderSales == null){
+                result.put("status", 400);
+                result.put("msg", "订单确认失败，请联系后台");
+                return result;
+            }
+
+            operatorProductsOrderSales.setIsConfirm("1");
+            operatorService.productsOrderSalesSave(operatorProductsOrderSales);
+
+
+            // 供应商增加未处理订单
+            SupplierProductsOrderSales supplierProductsOrderSales = new SupplierProductsOrderSales();
+            supplierProductsOrderSales.setSalesProductsId(operatorProductsOrderSales.getSalesProductsId());
+            supplierProductsOrderSales.setSalesProductsQuantity(operatorProductsOrderSales.getSalesProductsQuantity());
+            supplierProductsOrderSales.setSalesProductsPrice(operatorProductsOrderSales.getSalesProductsPrice());
+            supplierProductsOrderSales.setPetshopId(1);
+            supplierProductsOrderSales.setPetshopName("Wuli");
+            supplierProductsOrderSales.setPetshopPhone("12345678");
+            supplierProductsOrderSales.setPetshopAddress("Hubei Province Wuhan University of Technology");
+            supplierProductsOrderSales.setPetshopRemarks("None");
+            supplierProductsOrderSales.setUserOrderId(operatorProductsOrderSales.getUserOrderId());
+            supplierProductsOrderSales.setUserName(operatorProductsOrderSales.getUserName());
+            supplierProductsOrderSales.setUserPhone(operatorProductsOrderSales.getUserPhone());
+            supplierProductsOrderSales.setUserPhone(operatorProductsOrderSales.getUserPhone());
+            supplierProductsOrderSales.setUserAddress(operatorProductsOrderSales.getUserAddress());
+            supplierProductsOrderSales.setUserRemarks(operatorProductsOrderSales.getUserRemarks());
+            supplierProductsOrderSales.setOrderDate(operatorProductsOrderSales.getOrderDate());
+            supplierProductsOrderSales.setSalesAllPrice(operatorProductsOrderSales.getSalesAllPrice());
+            supplierProductsOrderSales.setIsDelivery("0");
+
+            supplierService.productsOrdersSave(supplierProductsOrderSales);
+        }
+
 
 
 
@@ -290,6 +298,95 @@ public class OperatorController {
         result.put("msg", "订单确认成功，已发往供应商");
         return result;
     }
+
+
+    /**
+     * 7. 返回宠物所有订单
+     */
+    @ApiOperation(value = "获取所有宠物订单", notes = "无参数")
+    @PostMapping("/operator/getOrders/AllPet")
+    public Map<String, Object> getSalesOrdersAllPet() {
+        Map<String, Object> result = new HashMap<>();
+
+        // 查看所有订单
+        List<OperatorPetOrderSales> petSalesList = operatorService.getAllPetSales();
+
+
+        result.put("status", 200);
+        result.put("msg", "已完成销售订单单获取成功");
+        result.put("宠物销售订单", petSalesList);
+
+        return result;
+    }
+
+    /**
+     * 8. 返回宠物用品所有订单
+     */
+    @ApiOperation(value = "获取未处理的销售订单", notes = "无参数")
+    @PostMapping("/operator/getOrders/AllProducts")
+    public Map<String, Object> getSalesOrdersAllProducts() {
+        Map<String, Object> result = new HashMap<>();
+
+        // 查看所有订单
+        List<OperatorProductsOrderSales> productsSalesList = operatorService.getAllProductsSales();
+
+        Collections.sort(productsSalesList, new Comparator<OperatorProductsOrderSales>(){
+            @Override
+            public int compare(OperatorProductsOrderSales s1, OperatorProductsOrderSales s2){
+                return s1.getOrderDate().compareTo(s2.getOrderDate());
+            }
+        });
+
+        // 加入到结果中
+        result.put("status", 200);
+        result.put("msg", "成功获取未处理的销售账单");
+        result.put("宠物用品销售订单", productsSalesList);
+
+        return result;
+    }
+
+
+
+
+    /**
+     * 2. 获取已完成的销售订单
+     */
+
+
+//    /**
+//     * 3. 获取进货账单
+//     */
+//    @ApiOperation(value = "获取进货账单", notes = "参数:无")
+//    @PostMapping("/operator/getOrders/purchase")
+//    public Map<String, Object> getPurchaseOrders() {
+//        Map<String, Object> result = new HashMap<>();
+//
+//        List<OperatorPetOrderPurchase> petPurchasesList = operatorService.getAllPetPurchase();
+//        List<OperatorProductsOrderPurchase> productsPurchaseList = operatorService.getAllProductsPurchase();
+//
+//        // 获取成功，返回账单
+//        result.put("status", 200);
+//        result.put("msg", "进货账单获取成功");
+//        result.put("宠物进货账单", petPurchasesList);
+//        result.put("宠物用品进货账单", productsPurchaseList);
+//
+//        return result;
+//    }
+
+
+    /**
+     * 4. 获取未处理的销售订单
+     */
+
+
+    /**
+     * 5. 确认宠物订单：确认订单，供应商增加待处理订单
+     */
+
+
+    /**
+     * 6. 确认宠物用品订单：确认订单，供应商增加待处理订单
+     */
 
 
     /**

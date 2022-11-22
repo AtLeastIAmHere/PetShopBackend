@@ -11,7 +11,7 @@
  Target Server Version : 80031 (8.0.31)
  File Encoding         : 65001
 
- Date: 22/11/2022 17:36:45
+ Date: 23/11/2022 01:34:08
 */
 
 SET NAMES utf8mb4;
@@ -268,8 +268,8 @@ INSERT INTO `operator_products_order_sales` VALUES (15, 8, 1, 122.00, 4, 'Peter'
 INSERT INTO `operator_products_order_sales` VALUES (16, 8, 1, 111.00, 4, 'Peter', '130-5173-7716', '527 Fifth Avenue', '不错哦', '2022-11-21 09:09:58', 111, '-1', 21);
 INSERT INTO `operator_products_order_sales` VALUES (17, 8, 1, 122.00, 4, 'Peter', '130-5173-7716', '527 Fifth Avenue', '不错哦', '2022-11-22 09:08:52', 122, '1', 22);
 INSERT INTO `operator_products_order_sales` VALUES (18, 8, 1, 111.00, 4, 'Peter', '130-5173-7716', '527 Fifth Avenue', '不错哦', '2022-11-22 09:08:52', 111, '1', 22);
-INSERT INTO `operator_products_order_sales` VALUES (19, 8, 1, 122.00, 4, 'Peter', '130-5173-7716', '527 Fifth Avenue', '不错哦', '2022-11-22 09:20:03', 122, '0', 23);
-INSERT INTO `operator_products_order_sales` VALUES (20, 8, 1, 111.00, 4, 'Peter', '130-5173-7716', '527 Fifth Avenue', '不错哦', '2022-11-22 09:20:03', 111, '0', 23);
+INSERT INTO `operator_products_order_sales` VALUES (19, 8, 1, 122.00, 4, 'Peter', '130-5173-7716', '527 Fifth Avenue', '不错哦', '2022-11-22 09:20:03', 122, '1', 23);
+INSERT INTO `operator_products_order_sales` VALUES (20, 8, 1, 111.00, 4, 'Peter', '130-5173-7716', '527 Fifth Avenue', '不错哦', '2022-11-22 09:20:03', 111, '1', 23);
 
 -- ----------------------------
 -- Table structure for supplier
@@ -377,7 +377,7 @@ INSERT INTO `supplier_pet_stock` VALUES (1, '哈士奇', 111, 'black', 2, 2, '1'
 INSERT INTO `supplier_pet_stock` VALUES (2, '金渐层', 200, 'yellow', 1, 1, '1', '2022-11-30 14:56:22', 50, '武汉宠物中心', '2022-11-18 14:56:30', '1');
 INSERT INTO `supplier_pet_stock` VALUES (3, '泰迪', 300, 'brown', 3, 3, '1', '2022-11-20 14:56:39', 50, '武汉宠物中心', '2022-11-20 14:56:43', '3');
 INSERT INTO `supplier_pet_stock` VALUES (4, '拉布拉多', 300, 'white', 4, 3, '1', '2022-11-20 14:56:53', 50, '武汉宠物中心', '2022-11-16 14:56:57', '4');
-INSERT INTO `supplier_pet_stock` VALUES (5, '垂耳兔', 50, 'brown', 5, 5, '1', '2022-11-21 00:00:00', 46, '武汉宠物中心', '2022-11-23 14:57:19', '5');
+INSERT INTO `supplier_pet_stock` VALUES (5, '垂耳兔', 50, 'brown', 5, 5, '1', '2022-11-19 00:00:00', 44, '武汉宠物中心', '2022-11-23 14:57:19', '5');
 INSERT INTO `supplier_pet_stock` VALUES (6, '纯种蓝白英短', 100, 'blue', 6, 5, '1', '2022-11-11 14:57:29', 50, '武汉宠物中心', '2022-11-03 14:57:35', '6');
 INSERT INTO `supplier_pet_stock` VALUES (7, '金吉拉纯种幼猫', 66, 'white', 4, 3, '1', '2022-11-20 14:57:44', 50, '武汉宠物中心', '2022-11-18 14:57:51', NULL);
 
@@ -405,15 +405,17 @@ CREATE TABLE `supplier_products_order_sales`  (
   `is_delivery` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `user_id` int NULL DEFAULT NULL,
   PRIMARY KEY (`sales_order_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of supplier_products_order_sales
 -- ----------------------------
 INSERT INTO `supplier_products_order_sales` VALUES (6, 8, 1, 122.00, 1, 'Wuli', '12345678', 'Hubei Province Wuhan University of Technology', 'None', 22, 'Peter', '130-5173-7716', '527 Fifth Avenue', '不错哦', '2022-11-22 09:08:52', 122.00, '1', NULL);
 INSERT INTO `supplier_products_order_sales` VALUES (7, 8, 1, 111.00, 1, 'Wuli', '12345678', 'Hubei Province Wuhan University of Technology', 'None', 22, 'Peter', '130-5173-7716', '527 Fifth Avenue', '不错哦', '2022-11-22 09:08:52', 111.00, '1', NULL);
-INSERT INTO `supplier_products_order_sales` VALUES (8, 8, 1, 111.00, 1, 'Wuli', '12345678', 'Hubei Province Wuhan University of Technology', 'None', 22, 'Peter', '130-5173-7716', '527 Fifth Avenue', '不错哦', '2022-11-22 09:08:52', 111.00, '0', NULL);
-INSERT INTO `supplier_products_order_sales` VALUES (9, 8, 1, 111.00, 1, 'Wuli', '12345678', 'Hubei Province Wuhan University of Technology', 'None', 22, 'Peter', '130-5173-7716', '527 Fifth Avenue', '不错哦', '2022-11-22 09:08:52', 111.00, '0', NULL);
+INSERT INTO `supplier_products_order_sales` VALUES (8, 8, 1, 111.00, 1, 'Wuli', '12345678', 'Hubei Province Wuhan University of Technology', 'None', 22, 'Peter', '130-5173-7716', '527 Fifth Avenue', '不错哦', '2022-11-22 09:08:52', 111.00, '1', NULL);
+INSERT INTO `supplier_products_order_sales` VALUES (9, 8, 1, 111.00, 1, 'Wuli', '12345678', 'Hubei Province Wuhan University of Technology', 'None', 22, 'Peter', '130-5173-7716', '527 Fifth Avenue', '不错哦', '2022-11-22 09:08:52', 111.00, '1', NULL);
+INSERT INTO `supplier_products_order_sales` VALUES (10, 8, 1, 122.00, 1, 'Wuli', '12345678', 'Hubei Province Wuhan University of Technology', 'None', 23, 'Peter', '130-5173-7716', '527 Fifth Avenue', '不错哦', '2022-11-22 09:20:03', 122.00, '1', NULL);
+INSERT INTO `supplier_products_order_sales` VALUES (11, 8, 1, 111.00, 1, 'Wuli', '12345678', 'Hubei Province Wuhan University of Technology', 'None', 23, 'Peter', '130-5173-7716', '527 Fifth Avenue', '不错哦', '2022-11-22 09:20:03', 111.00, '1', NULL);
 
 -- ----------------------------
 -- Table structure for supplier_products_stock
@@ -436,7 +438,7 @@ CREATE TABLE `supplier_products_stock`  (
 -- ----------------------------
 -- Records of supplier_products_stock
 -- ----------------------------
-INSERT INTO `supplier_products_stock` VALUES (11, 8, '泰迪小型犬狗舍', 80, 'black', 20, 37, 'Holmes Inc.', '2022-11-16 16:57:03', 'RuOOTrEjhj');
+INSERT INTO `supplier_products_stock` VALUES (11, 8, '泰迪小型犬狗舍', 80, 'black', 20, 34, 'Holmes Inc.', '2022-11-16 16:57:03', 'RuOOTrEjhj');
 
 -- ----------------------------
 -- Table structure for supplier_stock
@@ -528,8 +530,8 @@ INSERT INTO `user_order` VALUES (18, '2022-11-21 06:20:20', 4, 398, 15, 4);
 INSERT INTO `user_order` VALUES (19, '2022-11-21 06:29:36', 4, 398, 15, 4);
 INSERT INTO `user_order` VALUES (20, '2022-11-21 09:06:56', 5, 398, 15, 4);
 INSERT INTO `user_order` VALUES (21, '2022-11-21 09:09:57', 5, 398, 15, 4);
-INSERT INTO `user_order` VALUES (22, '2022-11-22 09:08:52', 3, 398, 15, 4);
-INSERT INTO `user_order` VALUES (23, '2022-11-22 09:20:03', 2, 398, 15, 4);
+INSERT INTO `user_order` VALUES (22, '2022-11-22 09:08:52', 4, 398, 15, 4);
+INSERT INTO `user_order` VALUES (23, '2022-11-22 09:20:03', 4, 398, 15, 4);
 
 -- ----------------------------
 -- Table structure for user_order_goods
