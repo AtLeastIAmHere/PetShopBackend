@@ -63,15 +63,15 @@ public class SupplierController {
     }
 
     /**
-     * 2. 返回库存信息（宠物+宠物用品）
+     * 2.0. 返回库存信息（宠物+用品）
      */
-    @ApiOperation(value = "获取宠物库存", notes = "参数:无")
+    @ApiOperation(value = "获取库存", notes = "参数:无")
     @PostMapping("/supplier/getStock")
     public Map<String, Object> getStock() {
         Map<String, Object> result = new HashMap<>();
 
-        List<SupplierPetStock> supplierPetStocksList = supplierService.getAllPetStock();
         List<SupplierProductsStock> supplierProductsStockList = supplierService.getAllProductsStock();
+        List<SupplierPetStock> supplierPetStocksList = supplierService.getAllPetStock();
 
         if (supplierPetStocksList == null || supplierProductsStockList == null) {
             // 如果为null则可能获取失败
@@ -80,8 +80,54 @@ public class SupplierController {
         } else {
             // 获取成功，返回账单
             result.put("status", 200);
+            result.put("msg", "所有库存获取成功");
+            result.put("宠物库存", supplierPetStocksList);
+            result.put("宠物用品库存", supplierProductsStockList);
+        }
+        return result;
+    }
+
+    /**
+     * 2.1. 返回库存信息（宠物）
+     */
+    @ApiOperation(value = "获取宠物库存", notes = "参数:无")
+    @PostMapping("/supplier/getStock/pet")
+    public Map<String, Object> getPetStock() {
+        Map<String, Object> result = new HashMap<>();
+
+        List<SupplierPetStock> supplierPetStocksList = supplierService.getAllPetStock();
+
+        if (supplierPetStocksList == null) {
+            // 如果为null则可能获取失败
+            result.put("status", 400);
+            result.put("msg", "库存获取失败，请联系后台");
+        } else {
+            // 获取成功，返回账单
+            result.put("status", 200);
             result.put("msg", "库存获取成功");
             result.put("宠物库存", supplierPetStocksList);
+        }
+        return result;
+    }
+
+    /**
+     * 2.2. 返回库存信息（宠物用品）
+     */
+    @ApiOperation(value = "获取宠物用品库存", notes = "参数:无")
+    @PostMapping("/supplier/getStock/products")
+    public Map<String, Object> getProductsStock() {
+        Map<String, Object> result = new HashMap<>();
+
+        List<SupplierProductsStock> supplierProductsStockList = supplierService.getAllProductsStock();
+
+        if (supplierProductsStockList == null) {
+            // 如果为null则可能获取失败
+            result.put("status", 400);
+            result.put("msg", "库存获取失败，请联系后台");
+        } else {
+            // 获取成功，返回账单
+            result.put("status", 200);
+            result.put("msg", "成功获取宠物用品库存");
             result.put("宠物用品库存", supplierProductsStockList);
         }
         return result;
@@ -196,6 +242,8 @@ public class SupplierController {
         result.put("宠物用品订单", productsOrdersFinish);
         return result;
     }
+
+
 
     /**
      * 5. 宠物发货：修改宠物库存信息、供应商账单、用户帐单
@@ -327,6 +375,70 @@ public class SupplierController {
             result.put("status", 400);
             result.put("msg", "宠物库存不足，请等待库存补充或查看类似商品");
         }
+        return result;
+    }
+
+    /**
+     * 7. 返回宠物所有订单
+     */
+    @ApiOperation(value = "获取未发货订单", notes = "参数:无")
+    @PostMapping("/supplier/getOrders/AllPet")
+    public Map<String, Object> getPetAllOrder() {
+        Map<String, Object> result = new HashMap<>();
+
+        List<SupplierPetOrderSales> petsOrdersList = supplierService.getAllPetOrders();
+
+        if (petsOrdersList == null) {
+            // 如果为null则可能获取失败
+            result.put("status", 400);
+            result.put("msg", "订单获取失败，请联系后台");
+            return result;
+        }
+
+        // 根据订单时间升序排序
+        Collections.sort(petsOrdersList, new Comparator<SupplierPetOrderSales>(){
+            @Override
+            public int compare(SupplierPetOrderSales s1, SupplierPetOrderSales s2){
+                return s1.getOrderDate().compareTo(s2.getOrderDate());
+            }
+        });
+
+        // 获取成功，返回账单
+        result.put("status", 200);
+        result.put("msg", "成功获取所有宠物订单");
+        result.put("宠物订单", petsOrdersList);
+        return result;
+    }
+
+    /**
+     * 8. 返回宠物用品所有订单
+     */
+    @ApiOperation(value = "获取未发货订单", notes = "参数:无")
+    @PostMapping("/supplier/getOrders/AllProducts")
+    public Map<String, Object> getProductsAllOrders() {
+        Map<String, Object> result = new HashMap<>();
+
+        List<SupplierProductsOrderSales> productsOrdersList = supplierService.getAllProductsOrders();
+
+
+        if (productsOrdersList == null) {
+            // 如果为null则可能获取失败
+            result.put("status", 400);
+            result.put("msg", "订单获取失败，请联系后台");
+            return result;
+        }
+
+        Collections.sort(productsOrdersList, new Comparator<SupplierProductsOrderSales>(){
+            @Override
+            public int compare(SupplierProductsOrderSales s1, SupplierProductsOrderSales s2){
+                return s1.getOrderDate().compareTo(s2.getOrderDate());
+            }
+        });
+
+        // 获取成功，返回账单
+        result.put("status", 200);
+        result.put("msg", "成功获取所有宠物用品订单");
+        result.put("宠物用品订单", productsOrdersList);
         return result;
     }
 
